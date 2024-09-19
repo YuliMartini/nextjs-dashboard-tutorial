@@ -6,6 +6,7 @@ import { AuthError } from 'next-auth';
 import { sql } from '@vercel/postgres';
 import { signIn } from '@/auth';
 import { z } from 'zod';
+import base64url from 'base64url';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -135,3 +136,43 @@ export async function authenticate(
     throw error;
   }
 }
+
+//' WebAuthn Registration Route: route to handle WebAuthn credential registration for users.
+//' The backend will generate a challenge and return it to the frontend.
+//' The frontend will then collect the credential using the WebAuthn API, and the backend will validate and store it.
+// export async function registerWebAuthnCredential(userId: string, attestationResponse: any) {
+//   // Decode and verify attestationResponse, usually involves a WebAuthn library
+//   const { id, publicKey, rawId } = attestationResponse;
+
+//   try {
+//     // Store the user's WebAuthn credential in the database
+//     await sql`
+//       UPDATE users
+//       SET webauthnCredentialId = ${base64url.encode(id)},
+//           publicKey = ${base64url.encode(publicKey)}
+//       WHERE id = ${userId};
+//     `;
+//   } catch (error) {
+//     throw new Error('Failed to register WebAuthn credential.');
+//   }
+// }
+
+//' WebAuthn Authentication Route: Create another route to authenticate using the WebAuthn credential.
+//' When a user attempts to log in, you need to fetch the stored publicKey and verify the user's assertion.
+// export async function authenticateWithWebAuthn(userId: string, assertionResponse: any) {
+//   try {
+//     // Fetch the user's publicKey from the database
+//     const result = await sql`SELECT publicKey FROM users WHERE id = ${userId}`;
+//     const publicKey = result.rows[0]?.publicKey;
+
+//     if (!publicKey) throw new Error('No WebAuthn credential found for user.');
+
+//     // Verify the assertionResponse with the publicKey
+//     // Use a WebAuthn library for this (e.g., webauthn-server)
+//     const isValid = verifyAssertion(publicKey, assertionResponse);
+
+//     if (!isValid) throw new Error('Failed to authenticate WebAuthn credential.');
+//   } catch (error) {
+//     throw new Error('WebAuthn authentication failed.');
+//   }
+// }

@@ -7,6 +7,8 @@ export type User = {
   name: string;
   email: string;
   password: string;
+  webauthncredentialid: string,
+  publickey: string
 };
 
 export type Customer = {

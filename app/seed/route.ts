@@ -101,6 +101,15 @@ async function seedRevenue() {
   return insertedRevenue;
 }
 
+async function updateUserSchema() {
+  await client.sql`
+    ALTER TABLE users
+    ADD COLUMN webauthnCredentialId TEXT UNIQUE,
+    ADD COLUMN publicKey TEXT;
+  `;
+  console.log("Database schema updated");
+}
+
 export async function GET() {
   try {
     await client.sql`BEGIN`;
@@ -108,6 +117,7 @@ export async function GET() {
     await seedCustomers();
     await seedInvoices();
     await seedRevenue();
+    await updateUserSchema();
     await client.sql`COMMIT`;
 
     return Response.json({ message: 'Database seeded successfully' });
